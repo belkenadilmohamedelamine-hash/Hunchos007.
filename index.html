@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hunchos007tv- Modern Raffle Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #f59e0b;
+            --secondary-light: #fbbf24;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --light: #e2e8f0;
+            --success: #10b981;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --kick: #53fc18;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, #1a1f3a 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+        
+        .shape-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            top: -300px;
+            right: -200px;
+        }
+        
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -200px;
+            left: -100px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        header {
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid var(--glass-border);
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-photo::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.7;
+            filter: blur(15px);
+        }
+        
+        .profile-photo img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+        
+        .name-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .online-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--success);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .online-badge::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .kick-button {
+            position: absolute;
+            right: -45px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, var(--kick), #3bb710);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(83, 252, 24, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1;
+            white-space: nowrap;
+        }
+        
+        .kick-button:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 6px 15px rgba(83, 252, 24, 0.4);
+        }
+        
+        .kick-button i {
+            font-size: 1rem;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instagram:hover {
+            background: #E1306C;
+        }
+        
+        .youtube:hover {
+            background: #FF0000;
+        }
+        
+        .discord:hover {
+            background: #5865F2;
+        }
+        
+        .kick:hover {
+            background: var(--kick);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: var(--secondary);
+        }
+        
+        .highlight {
+            color: var(--secondary-light);
+            font-weight: 600;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--glass);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .partners {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+        
+        @media (max-width: 700px) {
+            .partners {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .partner-card {
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .partner-card:hover {
+            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-3px);
+        }
+        
+        .partner-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            cursor: pointer;
+        }
+        
+        .partner-logo {
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--primary-light);
+        }
+        
+        .partner-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            font-size: 1.2rem;
+            margin: 20px 0 10px;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        h3 i {
+            color: var(--secondary);
+            font-size: 1rem;
+        }
+        
+        .partner-features {
+            list-style-type: none;
+            margin: 15px 0;
+        }
+        
+        .partner-features li {
+            margin-bottom: 10px;
+            padding-left: 24px;
+            position: relative;
+        }
+        
+        .partner-features li:before {
+            content: "✓";
+            color: var(--success);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .code-section {
+            background: linear-gradient(135deg, var(--dark), var(--dark-light));
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .code-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .code-label i {
+            color: var(--secondary-light);
+            font-size: 1.2rem;
+        }
+        
+        .code {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--secondary-light);
+            letter-spacing: 3px;
+            margin: 10px 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .note {
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .description-section {
+            margin-top: 40px;
+        }
+        
+        .description-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .description-card {
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        
+        .description-card:hover {
+            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-5px);
+        }
+        
+        .description-card h3 {
+            color: var(--primary-light);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .description-card h3 i {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-light);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        /* Circular WagerRace Card Styles */
+        .wagerrace-circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .wagerrace-circle {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .wagerrace-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .wagerrace-circle::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.2;
+            filter: blur(15px);
+        }
+        
+        .wagerrace-circle h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .wagerrace-circle h2 i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .wagerrace-circle p {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .wagerrace-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .wagerrace-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--glass);
+            border-radius: 20px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .wagerrace-step-number {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        
+        .wagerrace-step-text {
+            font-size: 0.85rem;
+        }
+        
+        /* Partner Image Styles */
+        .partner-image {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .partner-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .wagerrace-circle {
+                width: 320px;
+                height: 320px;
+                padding: 30px;
+            }
+            
+            .wagerrace-circle h2 {
+                font-size: 1.3rem;
+            }
+            
+            .wagerrace-step-text {
+                font-size: 0.8rem;
+            }
+            
+            .name-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .kick-button {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="profile-container">
+                <div class="profile-photo">
+                    <img src="111.png" alt="Crown Icon">
+                </div>
+                <div class="name-container">
+                    <h1>Hunchos007</h1>
+                    <div class="online-badge">Online</div>
+                    <a href="https://kick.com/hunchos007" class="kick-button" target="_blank">
+                        <i class="fas fa-play-circle"></i> Kick
+                    </a>
+                </div>
+                <p class="tagline">Exclusive Stake offers and gambling content</p>
+                
+                <div class="social-buttons">
+                    <a href="https://www.instagram.com/hunchos007tv/" class="social-btn instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@hunchos007" class="social-btn youtube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://discord.gg/pEA5sUtNHQ" class="social-btn discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                
+                </div>
+            </div>
+        </header>
+        
+        <!-- Circular WagerRace Card -->
+        <div class="wagerrace-circle-container">
+            <div class="wagerrace-circle">
+                <h2><i class="fas fa-calendar-alt"></i> $1,000 Monthly leaderboard</h2>
+                <p>Compete with other players for huge prizes and VIP status.</p>
+                
+        
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-handshake"></i> Partner Platforms</h2>
+            <p>We've partnered with leading platforms to enhance your experience and rewards.</p>
+            
+            <div class="partners">
+                <div class="partner-card">
+                    <a href="https://stake.com" class="partner-link" target="_blank"></a>
+                    <div class="partner-image">
+                        <img src="222.gif" alt="Stake.com">
+                    </div>
+                    <div class="partner-logo">Stake.com</div>
+                    <div class="partner-subtitle">World's Largest Online Casino and Sportsbook</div>
+                    
+                    <h3><i class="fas fa-star"></i> Top Features</h3>
+                    <ul class="partner-features">
+                        <li>Instant Crupto Deposits </li>
+                        <li>Higher betting limits </li>
+                        <li>VPN freindly </li>
+                    </ul>
+                    
+                    <div class="code-section">
+                        <div class="code-label">
+                            <i class="fas fa-gamepad"></i> REGISTER WITH MY CODE
+                        </div>
+                        <div class="code">Hunchos</div>
+                        <div class="note">USE CODE "HUNCHOS" DURING REGISTRATION TO UNLOCK Exclusive BENIFITS </div>
+                    </div>
+                </div>
+                
+                <div class="partner-card">
+                    <a href="https://stake.us" class="partner-link" target="_blank"></a>
+                    <div class="partner-image">
+                        <img src="333.gif" alt="Stake.us">
+                    </div>
+                    <div class="partner-logo">Stake.us</div>
+                    
+                    
+                    <h3><i class="fas fa-gem"></i> Premium Features</h3>
+                    <ul class="partner-features">
+                        <li>Card payments </li>
+                        <li>Instant Crypto Deposits</li>
+                        <li>Daily Rewards</li>
+                        <li>Receive $25 for FREE</li>
+                        <li>Receive $1 EVERY DAY</li>
+                    </ul>
+                    
+                    <div class="code-section">
+                        <div class="code-label">
+                            <i class="fas fa-gamepad"></i> REGISTER WITH MY CODE
+                        </div>
+                        <div class="code">HUNCHOS007</div>
+                        <div class="note">USE MY CODE "HUNCHOS007" DURING REGISTRATION TO UNLOCK PREMIEUM FEATURES</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 hunchos007 Platform. All rights reserved.</p>
+            <p>Important Gambling Disclaimer
+This website provides information about online casino bonuses and gambling content for entertainment purposes. Please gamble responsibly. Gambling can be addictive.
+Problem Gambling Hotline: 1-800-522-4700 | Crisis Text Line: Text HOME to 741741 | Gambling Addiction Help: ncpgambling.org
+By using this site, you acknowledge that you are 18+ years old and accept full responsibility for your gambling activities. </p>
+          
+        </footer>
+    </div>
+
+    <script>
+        // Simple script to toggle online status (for demonstration)
+        document.addEventListener('DOMContentLoaded', function() {
+            const onlineBadge = document.querySelector('.online-badge');
+            
+            // Simulate online status with a pulsing effect
+            setInterval(() => {
+                onlineBadge.style.opacity = onlineBadge.style.opacity === '0.8' ? '1' : '0.8';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
